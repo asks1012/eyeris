@@ -153,6 +153,12 @@ print("$test1")
               homeMaterialButton(() {
                 Navigator.pushNamed(context, '/home/wageSeekerList');
               }, "Wage Seeker", MediaQuery.of(context).size.width),
+              SizedBox(
+                height: 50,
+              ),
+              homeMaterialButton(() {
+                Navigator.pushNamed(context, '/home/viewAttendance');
+              }, "View Attendance", MediaQuery.of(context).size.width),
             ],
           ),
         ),

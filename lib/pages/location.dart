@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'package:geocoding/geocoding.dart' as addr;
+import 'package:geolocator/geolocator.dart';
 
 class LocationFind extends StatelessWidget {
   LocationFind({Key? key}) : super(key: key);
@@ -16,7 +17,7 @@ class LocationFind extends StatelessWidget {
     if (!_serviceEnabled) {
       _serviceEnabled = await location.requestService();
       if (!_serviceEnabled) {
-       return  "Please Enable location Services.";
+        return "Please Enable location Services.";
       }
     }
 
@@ -28,9 +29,9 @@ class LocationFind extends StatelessWidget {
 
     location.changeSettings();
     _locationData = await location.getLocation();
-    
+
     location.enableBackgroundMode(enable: true);
-   
+
     List<addr.Placemark> placemarks = await addr.placemarkFromCoordinates(
         _locationData.latitude!, _locationData.longitude!);
     // ignore: prefer_interpolation_to_compose_strings
@@ -41,8 +42,21 @@ class LocationFind extends StatelessWidget {
         "PIN- " +
         placemarks[0].postalCode.toString();
     return address;
-    
   }
+
+  var uoh_lat = 17.4567;
+  var uoh_long = 78.3264;
+  void isUnderRadius() {
+    var dist = Geolocator.distanceBetween(
+        uoh_lat, uoh_long, 20.221850953225395, 85.73454860746622);
+    if (dist > 10000) {
+      print("Person is far away.");
+    }
+    // ignore: prefer_interpolation_to_compose_strings
+    print("Distance is " + dist.toString());
+    // }
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(

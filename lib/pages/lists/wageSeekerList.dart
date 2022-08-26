@@ -36,7 +36,7 @@ class _wageSeekerListState extends State<wageSeekerList> {
             borderRadius: BorderRadius.circular(10),
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.shade200,
+                color: Colors.grey.shade300,
                 blurRadius: 5,
               )
             ],
@@ -53,55 +53,89 @@ class _wageSeekerListState extends State<wageSeekerList> {
               Text('DOB : ' + allusers[i]['dob']),
               Text('Phone : ' + allusers[i]['phone']),
               Text('Pincode : ' + allusers[i]['pincode']),
-              TextButton(
-                style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(Palette.myTheme),
-                    foregroundColor: MaterialStateProperty.all(Colors.white)),
-                onPressed: () async {
-                  final snackbar = ScaffoldMessenger.of(context);
-                  try {
-                    final ImagePicker picker = ImagePicker();
-                    final XFile? photo =
-                        await picker.pickImage(source: ImageSource.camera);
-                    // await Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //         builder: (context) => LocationFind()));
-                    if (photo != null) {
-                      File imageFile = File(photo.path);
-                      final imageBytes = imageFile.readAsBytesSync();
-                      String imageEncoded = base64Encode(imageBytes);
-                      print("----------------");
-                      var uri = Uri.parse("${vars.url}/markattendance");
-                      http.Response response = await http.post(
-                        uri,
-                        body: {"imageString": imageEncoded},
-                      );
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                    style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all(Palette.myTheme),
+                        foregroundColor:
+                            MaterialStateProperty.all(Colors.white)),
+                    onPressed: () async {
+                      final snackbar = ScaffoldMessenger.of(context);
+                      try {
+                        final ImagePicker picker = ImagePicker();
+                        final XFile? photo =
+                            await picker.pickImage(source: ImageSource.camera);
+                        await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => LocationFind()));
+                        if (photo != null) {
+                          File imageFile = File(photo.path);
+                          final imageBytes = imageFile.readAsBytesSync();
+                          String imageEncoded = base64Encode(imageBytes);
+                          print("----------------");
+                          var uri = Uri.parse("${vars.url}/markattendance");
+                          http.Response response = await http.post(
+                            uri,
+                            body: {"imageString": imageEncoded},
+                          );
 
-                      print("Response: " + response.body);
-                      if (response.body == "0") {
-                        snackbar.showSnackBar(const SnackBar(
-                            content: Text("Attendance Successful")));
-                      } else if (response.body == "1") {
+                          print("Response: " + response.body);
+                          if (response.body == "0") {
+                            snackbar.showSnackBar(const SnackBar(
+                                content: Text("Attendance Successful")));
+                          } else if (response.body == "1") {
+                            snackbar.showSnackBar(SnackBar(
+                                content: Text("Attendance Unsuccessful")));
+                          }
+                          print(response.body);
+                        } else {
+                          // snackbar
+                          //     .showSnackBar(SnackBar(content: Text(response.body)));
+                        }
+                      } catch (e) {
+                        print(e);
                         snackbar.showSnackBar(
-                            SnackBar(content: Text("Attendance Unsuccessful")));
+                          const SnackBar(
+                            content: Text("Error Occured"),
+                          ),
+                        );
                       }
-                      print(response.body);
-                    } else {
-                      // snackbar
-                      //     .showSnackBar(SnackBar(content: Text(response.body)));
-                    }
-                  } catch (e) {
-                    print(e);
-                    snackbar.showSnackBar(
-                      const SnackBar(
-                        content: Text("Error Occured"),
-                      ),
-                    );
-                  }
-                },
-                child: const Text("Take Attendance"),
-              )
+                    },
+                    child: const Text("Take Attendance"),
+                  ),
+                  TextButton(
+                    onPressed: () {},
+                    child: Text("Update"),
+                    style: ButtonStyle(
+                        foregroundColor:
+                            MaterialStateProperty.all(Colors.white),
+                        backgroundColor:
+                            MaterialStateProperty.all(Colors.green[400])),
+                  )
+                ],
+              ),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                TextButton(
+                  onPressed: () {},
+                  child: Text(" Assign Location "),
+                  style: ButtonStyle(
+                      foregroundColor: MaterialStateProperty.all(Colors.white),
+                      backgroundColor:
+                          MaterialStateProperty.all(Palette.myTheme)),
+                ),
+                TextButton(
+                  onPressed: () {},
+                  child: Text("Delete"),
+                  style: ButtonStyle(
+                      foregroundColor: MaterialStateProperty.all(Colors.white),
+                      backgroundColor:
+                          MaterialStateProperty.all(Colors.red[300])),
+                ),
+              ])
             ],
           ),
         ),
@@ -160,8 +194,23 @@ class _wageSeekerListState extends State<wageSeekerList> {
               return data;
             }
           }
-          return const Center(
-            child: CircularProgressIndicator(),
+          return Center(
+            child: Stack(
+              children: const [
+                Center(
+                    child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                )),
+                Positioned(
+                    bottom: 0,
+                    top: 60,
+                    left: 0,
+                    right: 0,
+                    child: Center(
+                      child: Text("Loading..."),
+                    ))
+              ],
+            ),
           );
         },
         future: getRecords(),

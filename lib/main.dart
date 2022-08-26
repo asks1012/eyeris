@@ -11,6 +11,7 @@ import 'package:eyeris/pages/lists/stateGovList.dart';
 import 'package:eyeris/pages/lists/wageSeekerList.dart';
 import 'package:eyeris/pages/login.dart';
 import 'package:eyeris/pages/splash.dart';
+import 'package:eyeris/pages/viewAttendance.dart';
 import 'package:eyeris/theme/custom_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -46,6 +47,7 @@ class _MyAppState extends State<MyApp> {
         '/home/priList/pri': (context) => const pri(),
         '/home/wageSeekerList': (context) => const wageSeekerList(),
         '/home/wageSeekerList/wageSeeker': (context) => const wageSeeker(),
+        '/home/viewAttendance': (context) => const viewAttendance(),
       },
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
