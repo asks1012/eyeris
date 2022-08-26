@@ -1,12 +1,17 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:crypto/crypto.dart';
+import 'package:eyeris/pages/location.dart';
 import 'package:eyeris/pages/vars.dart';
 import 'package:eyeris/theme/custom_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:nanoid/nanoid.dart';
+import 'package:http/http.dart' as http;
+import 'package:eyeris/pages/vars.dart' as vars;
 
 class wageSeeker extends StatefulWidget {
   const wageSeeker({Key? key}) : super(key: key);
@@ -17,6 +22,7 @@ class wageSeeker extends StatefulWidget {
 
 class _wageSeekerState extends State<wageSeeker> {
   DateTime? pickedDate;
+  bool iris = false;
   TextEditingController dateInput = TextEditingController();
   @override
   void initState() {
@@ -386,23 +392,77 @@ class _wageSeekerState extends State<wageSeeker> {
 
                   // IRIS capture button
                   MaterialButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      final snackbar = ScaffoldMessenger.of(context);
+                      try {
+                        final ImagePicker picker = ImagePicker();
+                        final XFile? photo =
+                            await picker.pickImage(source: ImageSource.camera);
+                        await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => LocationFind()));
+                        if (photo != null) {
+                          // ignore: use_build_context_synchronously
+
+                          File imageFile = File(photo.path);
+                          final imageBytes = imageFile.readAsBytesSync();
+                          String imageEncoded = base64Encode(imageBytes);
+                          print("----------------");
+                          var uri = Uri.parse("${vars.url}/registerImage");
+                          var response = await http.post(
+                            uri,
+                            body: {"imageString": imageEncoded},
+                          );
+
+                          print("Response: " + response.body);
+                          if (response.body == "0") {
+                            setState(() {
+                              iris = true;
+                            });
+                            snackbar.showSnackBar(const SnackBar(
+                                content: Text("IRIS Registered")));
+                          } else {
+                            snackbar.showSnackBar(
+                                SnackBar(content: Text(response.body)));
+                          }
+                          print(response.body);
+                        } else {
+                          snackbar.showSnackBar(const SnackBar(
+                              content: Text(
+                                  "Unable to get photo. Please try again")));
+                        }
+                      } catch (e) {
+                        print(e);
+                        snackbar.showSnackBar(
+                          const SnackBar(
+                            content: Text("Error Occured"),
+                          ),
+                        );
+                      }
+                    },
                     color: Colors.amber,
                     minWidth: MediaQuery.of(context).size.width,
                     height: 45,
                     child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
-                          Text(
-                            "Capture IRIS  ",
-                            style: TextStyle(
-                                fontSize: 15, fontWeight: FontWeight.bold),
-                          ),
-                          Icon(
-                            Icons.not_interested_rounded,
-                            color: Colors.red,
-                          )
-                        ]),
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          "Capture IRIS  ",
+                          style: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.bold),
+                        ),
+                        iris
+                            ? const Icon(
+                                Icons.done,
+                                color: Colors.green,
+                              )
+                            : const Icon(
+                                Icons.not_interested_rounded,
+                                color: Colors.red,
+                              )
+                      ],
+                    ),
                   ),
                   const SizedBox(
                     height: 10,

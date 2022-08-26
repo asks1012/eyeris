@@ -47,8 +47,10 @@ dependencies:
   path: ^1.8.1
   gallery_saver: ^2.3.2
   image_gallery_saver: ^1.7.1
-  chaquopy: ^0.0.19
   intl: ^0.17.0
+  location: ^4.4.0
+  geocoding: ^2.0.5
+  camera: ^0.10.0+1
 
 dev_dependencies:
   flutter_test:

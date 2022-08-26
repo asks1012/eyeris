@@ -32,6 +32,7 @@ class _SplashState extends State<Splash> {
       var coll = db.collection("vars");
       var l = await coll.findOne();
       url = l!['url'];
+      db.close();
     } catch (e) {
       url = "";
     }

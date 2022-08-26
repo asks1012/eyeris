@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:chaquopy/chaquopy.dart';
 import 'package:eyeris/pages/forms/stateGov.dart';
 import 'package:eyeris/pages/lists/stateGovList.dart';
 import 'package:eyeris/pages/login.dart';
@@ -91,7 +90,10 @@ print("$test1")
                   );
                 }
               },
-              icon: const Icon(Icons.camera_alt)),
+              icon: const Icon(
+                Icons.camera_alt,
+                color: Colors.transparent,
+              )),
           IconButton(
               onPressed: () async {
                 const storage = FlutterSecureStorage();
